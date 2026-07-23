@@ -55,7 +55,7 @@ const Hero = () => {
 
 		let tl = gsap.timeline({
 			scrollTrigger: {
-				trigger: "video",
+				trigger: videoRef.current,
 				start: startValue,
 				end: endValue,
 				scrub: true,
@@ -63,12 +63,28 @@ const Hero = () => {
 			},
 		});
 
-		videoRef.current.onloadedmetadata = () => {
-			videoRef.current.play();
+		const video = videoRef.current;
 
-			tl.to(videoRef.current, {
-				currentTime: videoRef.current.duration,
+		const handleLoadedMetadata = async () => {
+			// Unlock the video on mobile
+			try {
+				await video.play();
+				video.pause();
+				video.currentTime = 0;
+			} catch (err) {
+				console.log(err);
+			}
+
+			tl.to(video, {
+				currentTime: video.duration,
+				ease: "none",
 			});
+		};
+
+		video.addEventListener("loadedmetadata", handleLoadedMetadata);
+
+		return () => {
+			video.removeEventListener("loadedmetadata", handleLoadedMetadata);
 		};
 	}, []);
 
@@ -116,7 +132,6 @@ const Hero = () => {
 					ref={videoRef}
 					muted
 					playsInline
-					autoPlay
 					preload="auto"
 					src="/videos/output.mp4"
 				/>
