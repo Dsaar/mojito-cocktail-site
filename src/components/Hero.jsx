@@ -64,6 +64,8 @@ const Hero = () => {
 		});
 
 		videoRef.current.onloadedmetadata = () => {
+			videoRef.current.play();
+
 			tl.to(videoRef.current, {
 				currentTime: videoRef.current.duration,
 			});
@@ -114,6 +116,7 @@ const Hero = () => {
 					ref={videoRef}
 					muted
 					playsInline
+					autoPlay
 					preload="auto"
 					src="/videos/output.mp4"
 				/>
